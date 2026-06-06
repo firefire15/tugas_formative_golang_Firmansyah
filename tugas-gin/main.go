@@ -1,10 +1,18 @@
 package main
 
-import "tugas-gin/routers"
+import (
+	"tugas-gin/routers"
+	"os"
+	"log"
+	"github.com/joho/godotenv"
+) 
 
 
 func main(){
-	var PORT = ":8080"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Gagal memuat file .env")
+	}
 
-	routers.StartBioskopServer().Run(PORT)
+	routers.StartBioskopServer().Run(":"+os.Getenv("PORT"))
 }
