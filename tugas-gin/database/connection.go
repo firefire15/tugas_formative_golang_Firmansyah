@@ -16,10 +16,7 @@ var(
 )
 
 func ConnectDB(){
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Gagal memuat file .env")
-	}
+	_ = godotenv.Load()
 
 	host     := os.Getenv("PGHOST")
 	port     := os.Getenv("PGPORT")
