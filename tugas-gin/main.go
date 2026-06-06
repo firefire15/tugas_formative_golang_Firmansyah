@@ -9,10 +9,15 @@ import (
 
 
 func main(){
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Gagal memuat file .env")
+	// Load .env file jika ada (opsional untuk production)
+	godotenv.Load()
+	
+	// Pastikan PORT tersedia, default ke 8080 jika tidak ada
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	routers.StartBioskopServer().Run(":"+os.Getenv("PORT"))
+	routers.StartBioskopServer().Run(":" + port)
 }
+
