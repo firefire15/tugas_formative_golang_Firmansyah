@@ -4,7 +4,7 @@ import(
 	"strconv"
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"tugas-gin/database"
+	"tugas-gin/db"
 	"database/sql"
 	_ "github.com/lib/pq"
 )
@@ -31,7 +31,7 @@ func CreateBioskop(ctx *gin.Context){
 	query := `INSERT INTO bioskop (nama, lokasi, rating) VALUES ($1, $2, $3) RETURNING id`
 	
 	var lastInsertId int
-	err := database.DB.QueryRow(query, newBioskop.Nama, newBioskop.Lokasi, newBioskop.Rating).Scan(&lastInsertId)
+	err := db.DB.QueryRow(query, newBioskop.Nama, newBioskop.Lokasi, newBioskop.Rating).Scan(&lastInsertId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan data ke database: " + err.Error()})
 		return
@@ -48,7 +48,7 @@ func GetBioskopByID(ctx *gin.Context){
 	query := "SELECT id, nama, lokasi, rating FROM bioskop where id=$1"
 
 	var b Bioskop
-	err := database.DB.QueryRow(query, bioskopID).Scan(&b.ID, &b.Nama, &b.Lokasi, &b.Rating)
+	err := db.DB.QueryRow(query, bioskopID).Scan(&b.ID, &b.Nama, &b.Lokasi, &b.Rating)
 
 	if err != nil{
 		if err == sql.ErrNoRows {
@@ -69,7 +69,7 @@ func GetBioskopByID(ctx *gin.Context){
 func GetBioskop(ctx *gin.Context){
 	query := "SELECT id, nama, lokasi, rating FROM bioskop"
 
-	rows, err := database.DB.Query(query)
+	rows, err := db.DB.Query(query)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data: " + err.Error()})
 		return
@@ -116,7 +116,7 @@ func UpdateBioskop(ctx *gin.Context){
 
 	query := "UPDATE bioskop SET nama = $1, lokasi = $2, rating = $3 WHERE id = $4 RETURNING id"	
 	var checkId int
-	err = database.DB.QueryRow(query, updatedBioskop.Nama, updatedBioskop.Lokasi, updatedBioskop.Rating, id).Scan(&checkId)
+	err = db.DB.QueryRow(query, updatedBioskop.Nama, updatedBioskop.Lokasi, updatedBioskop.Rating, id).Scan(&checkId)
 	
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -154,7 +154,7 @@ func DeleteBioskop(ctx *gin.Context) {
 	query := "DELETE FROM bioskop WHERE id = $1 RETURNING id"
 	
 	var deletedId int
-	err = database.DB.QueryRow(query, id).Scan(&deletedId)
+	err = db.DB.QueryRow(query, id).Scan(&deletedId)
 	
 	if err != nil {
 		if err == sql.ErrNoRows {
